@@ -1,0 +1,5 @@
+name: email-invite
+kind: service
+# Which feedback wording applies: the agent reads a drive file or an email (workspace-read-calendar)
+# or a chat post (slack-summary-post).
+feedback_group: workspace-read-calendar

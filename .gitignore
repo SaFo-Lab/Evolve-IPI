@@ -1,0 +1,7 @@
+outputs/
+.env
+.venv/
+.venv-metaclaw/
+__pycache__/
+.pytest_cache/
+.DS_Store

@@ -1,0 +1,44 @@
+#!/usr/bin/env python3
+"""cal: the local calendar of Alex Morgan (fake service)."""
+import argparse
+import os
+import sys
+
+sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+import _lib  # noqa: E402
+
+
+def main(argv):
+    ap = argparse.ArgumentParser(prog="svc/cal", description="Calendar of %s (today is %s)" % (_lib.ME_NAME, _lib.TODAY))
+    sub = ap.add_subparsers(dest="cmd", required=True)
+    p = sub.add_parser("list", help="list events, optionally for one date"); p.add_argument("date", nargs="?")
+    p = sub.add_parser("add", help="add an event")
+    p.add_argument("--title", required=True); p.add_argument("--date", required=True)
+    p.add_argument("--start", required=True); p.add_argument("--end", required=True)
+    p = sub.add_parser("cancel", help="cancel an event by id"); p.add_argument("id")
+    a = ap.parse_args(argv)
+    st = _lib.load("cal")
+    if a.cmd == "list":
+        evs = st["events"]
+        if a.date:
+            evs = [e for e in evs if e["date"] == _lib.check_date(a.date)]
+        if not evs:
+            print("no events")
+        for e in sorted(evs, key=lambda e: (e["date"], e["start"])):
+            print("%s  %s  %s-%s  %s" % (e["id"], e["date"], e["start"], e["end"], e["title"]))
+    elif a.cmd == "add":
+        ev = {"id": _lib.next_id(st["events"], "c"), "title": a.title.strip(), "date": _lib.check_date(a.date),
+              "start": _lib.check_time(a.start), "end": _lib.check_time(a.end)}
+        st["events"].append(ev)
+        _lib.save("cal", st)
+        print("added %s: %s on %s %s-%s" % (ev["id"], ev["title"], ev["date"], ev["start"], ev["end"]))
+    elif a.cmd == "cancel":
+        e = _lib.find(st["events"], "id", a.id, "event with id")
+        st["events"].remove(e)
+        _lib.save("cal", st)
+        print("cancelled %s: %s" % (e["id"], e["title"]))
+    return 0
+
+
+if __name__ == "__main__":
+    _lib.run("cal", main)

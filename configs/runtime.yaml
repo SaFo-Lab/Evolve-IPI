@@ -1,0 +1,9 @@
+# Local ports of one run. A container runs one combination, so these fixed values are safe.
+# Several runs at once on one host need three things each: its own ports (here; the four must differ),
+# its own EVOLVE_IPI_RUNTIME and its own HOME. A run holds its runtime directory and its home, and
+# refuses to start when another run holds either. One container per run gives all three.
+ports:
+  gateway: 18789   # OpenClaw gateway
+  policy: 30012    # endpoint of the RL line's agent: the trainer's server while adapting, the model server while evaluating
+  proxy: 30011     # MetaClaw proxy, the endpoint of the skill line's agent
+  model: 30013     # model server behind the MetaClaw proxy

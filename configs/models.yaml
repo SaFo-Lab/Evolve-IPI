@@ -1,0 +1,34 @@
+# The models under test. Each key is the name that --model takes.
+#
+#   tinker_id            the model's id on Tinker
+#   family               the tool-call format of the model: qwen, harmony (gpt-oss) or inkling
+#   skill_served_name    the name under which the model server presents the model to MetaClaw
+#   mechanisms           the self-evolution mechanisms the model takes part in: rl, skills
+#   skill_train_retries  how often a skill-evolution conversation on a service task is run again when
+#                        it failed only because the model did not engage (no tool call, or an empty
+#                        reply); after the last retry the evolution is aborted and starts over
+models:
+  qwen3.8-27b:
+    tinker_id: Qwen/Qwen3.8-27B
+    family: qwen
+    skill_served_name: qwen3.8-27b
+    mechanisms: [rl, skills]
+    skill_train_retries: 0
+  gpt-oss-120b:
+    tinker_id: openai/gpt-oss-120b
+    family: harmony
+    skill_served_name: openai-gpt-oss-120b
+    mechanisms: [rl, skills]
+    skill_train_retries: 4
+  gpt-oss-20b:
+    tinker_id: openai/gpt-oss-20b
+    family: harmony
+    skill_served_name: openai-gpt-oss-20b
+    mechanisms: [skills]
+    skill_train_retries: 4
+  inkling-small:
+    tinker_id: thinkingmachines/Inkling-Small
+    family: inkling
+    skill_served_name: thinkingmachines-inkling-small
+    mechanisms: [rl, skills]
+    skill_train_retries: 0

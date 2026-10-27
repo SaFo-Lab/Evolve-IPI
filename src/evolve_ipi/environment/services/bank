@@ -1,0 +1,90 @@
+#!/usr/bin/env python3
+"""bank: the current account of Alex Morgan (fake service)."""
+import argparse
+import os
+import re
+import sys
+
+sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+import _lib  # noqa: E402
+
+_IBAN_RE = re.compile(r"^[A-Z]{2}[0-9]{2}[A-Z0-9]{11,30}$")
+
+
+def _check_to(to):
+    if not to or not to.strip():
+        raise _lib.ServiceError("--to must be a recipient IBAN")
+    compact = re.sub(r"[\s-]", "", to.strip()).upper()
+    if not _IBAN_RE.match(compact):
+        raise _lib.ServiceError("--to must be an IBAN such as GB29NWBK60161331926819, got %r" % to)
+    return to.strip()
+
+
+def main(argv):
+    ap = argparse.ArgumentParser(prog="svc/bank", description="Bank account of %s (today is %s)" % (_lib.ME_NAME, _lib.TODAY))
+    sub = ap.add_subparsers(dest="cmd", required=True)
+    sub.add_parser("balance", help="print the balance")
+    sub.add_parser("iban", help="print my IBAN")
+    sub.add_parser("transactions", help="list transactions")
+    sub.add_parser("scheduled", help="list scheduled transactions")
+    p = sub.add_parser("transfer", help="send money now")
+    p.add_argument("--to", required=True); p.add_argument("--amount", required=True); p.add_argument("--subject", required=True)
+    p = sub.add_parser("schedule", help="schedule a transaction")
+    p.add_argument("--to", required=True); p.add_argument("--amount", required=True); p.add_argument("--subject", required=True)
+    p.add_argument("--date", required=True); p.add_argument("--recurring", action="store_true", help="repeat monthly")
+    d = sub.add_parser("docs", help="bank documents")
+    dsub = d.add_subparsers(dest="docs_cmd", required=True)
+    dsub.add_parser("list", help="list documents")
+    p = dsub.add_parser("read", help="print a document"); p.add_argument("name")
+    sub.add_parser("me", help="print my account holder details")
+    p = sub.add_parser("update", help="update my account holder details"); p.add_argument("--address", required=True)
+    a = ap.parse_args(argv)
+    st = _lib.load("bank")
+    if a.cmd == "balance":
+        print("balance: %.2f" % st["balance"])
+    elif a.cmd == "iban":
+        print(st["iban"])
+    elif a.cmd == "transactions":
+        for t in st["transactions"]:
+            party = ("to " + t["recipient"]) if "recipient" in t else ("from " + t["sender"])
+            print("%s  %s  %s  %.2f  %s" % (t["id"], t["date"], party, t["amount"], t["subject"]))
+    elif a.cmd == "scheduled":
+        for s in st["scheduled"]:
+            print("%s  %s  to %s  %.2f  %s  %s" % (s["id"], s["date"], s["recipient"], s["amount"], s["subject"],
+                                                    "monthly" if s["recurring"] else "once"))
+    elif a.cmd == "transfer":
+        to, amount = _check_to(a.to), _lib.check_amount(a.amount)
+        if amount > st["balance"]:
+            raise _lib.ServiceError("insufficient funds: balance %.2f, requested %.2f" % (st["balance"], amount))
+        t = {"id": _lib.next_id(st["transactions"], "t"), "date": _lib.TODAY, "recipient": to, "amount": amount, "subject": a.subject}
+        st["transactions"].append(t)
+        st["balance"] = round(st["balance"] - amount, 2)
+        _lib.save("bank", st)
+        print("transferred %.2f to %s (%s); balance %.2f" % (amount, to, t["id"], st["balance"]))
+    elif a.cmd == "schedule":
+        to, amount, date = _check_to(a.to), _lib.check_amount(a.amount), _lib.check_date(a.date)
+        s = {"id": _lib.next_id(st["scheduled"], "s"), "date": date, "recipient": to, "amount": amount,
+             "subject": a.subject, "recurring": bool(a.recurring)}
+        st["scheduled"].append(s)
+        _lib.save("bank", st)
+        print("scheduled %s: %.2f to %s on %s%s" % (s["id"], amount, to, date, " (monthly)" if s["recurring"] else ""))
+    elif a.cmd == "docs":
+        if a.docs_cmd == "list":
+            for doc in st["docs"]:
+                print("%s  (%d chars)" % (doc["name"], len(doc["content"])))
+        else:
+            print(_lib.find(st["docs"], "name", a.name, "document named")["content"])
+    elif a.cmd == "me":
+        u = st["user"]
+        print("name: %s\naddress: %s\nphone: %s" % (u["name"], u["address"], u["phone"]))
+    elif a.cmd == "update":
+        if not a.address.strip():
+            raise _lib.ServiceError("--address must not be empty")
+        st["user"]["address"] = a.address.strip()
+        _lib.save("bank", st)
+        print("address updated to: %s" % st["user"]["address"])
+    return 0
+
+
+if __name__ == "__main__":
+    _lib.run("bank", main)

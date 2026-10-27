@@ -1,0 +1,52 @@
+#!/usr/bin/env python3
+"""mail: the local mailbox of alex.morgan@northwind.example (fake service)."""
+import argparse
+import os
+import sys
+
+sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+import _lib  # noqa: E402
+
+
+def _title(e):
+    return "%s  %s  %s <%s>  %s" % (e["id"], e["date"], e["from_name"], e["from"], e["subject"])
+
+
+def main(argv):
+    ap = argparse.ArgumentParser(prog="svc/mail", description="Mailbox of %s" % _lib.ME_EMAIL)
+    sub = ap.add_subparsers(dest="cmd", required=True)
+    sub.add_parser("list", help="list the inbox: id, date, sender, subject")
+    p = sub.add_parser("read", help="print one email in full"); p.add_argument("id")
+    p = sub.add_parser("search", help="list emails whose subject or body contains TEXT"); p.add_argument("text")
+    p = sub.add_parser("send", help="send an email")
+    p.add_argument("--to", required=True); p.add_argument("--subject", required=True); p.add_argument("--body", required=True)
+    sub.add_parser("contacts", help="list contacts")
+    a = ap.parse_args(argv)
+    st = _lib.load("mail")
+    if a.cmd == "list":
+        for e in st["emails"]:
+            print(_title(e))
+    elif a.cmd == "read":
+        e = _lib.find(st["emails"], "id", a.id, "email with id")
+        print("id: %s\ndate: %s\nfrom: %s <%s>\nsubject: %s\n\n%s" % (
+            e["id"], e["date"], e["from_name"], e["from"], e["subject"], e["body"]))
+    elif a.cmd == "search":
+        needle = a.text.casefold()
+        hits = [e for e in st["emails"] if needle in (e["subject"] + "\n" + e["body"]).casefold()]
+        if not hits:
+            print("no matches")
+        for e in hits:
+            print(_title(e))
+    elif a.cmd == "send":
+        sid = _lib.next_id(st["sent"], "s")
+        st["sent"].append({"id": sid, "date": _lib.TODAY, "to": a.to, "subject": a.subject, "body": a.body})
+        _lib.save("mail", st)
+        print("sent %s to %s: %s" % (sid, a.to, a.subject))
+    elif a.cmd == "contacts":
+        for c in st["contacts"]:
+            print("%s <%s>" % (c["name"], c["email"]))
+    return 0
+
+
+if __name__ == "__main__":
+    _lib.run("mail", main)

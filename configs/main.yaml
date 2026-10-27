@@ -1,0 +1,48 @@
+# The main experiment: every combination below is adapted once and then evaluated in the settings
+# listed. gpt-oss-20b takes part in skill evolution only. Delete lines to run a subset.
+settings: [1, 2, 3]
+
+combos:
+  # RL: 3 models x 5 tasks
+  - {model: qwen3.8-27b, task: file-create, mechanism: rl}
+  - {model: qwen3.8-27b, task: drive-create, mechanism: rl}
+  - {model: qwen3.8-27b, task: email-invite, mechanism: rl}
+  - {model: qwen3.8-27b, task: chat-message, mechanism: rl}
+  - {model: qwen3.8-27b, task: chat-invite, mechanism: rl}
+
+  - {model: gpt-oss-120b, task: file-create, mechanism: rl}
+  - {model: gpt-oss-120b, task: drive-create, mechanism: rl}
+  - {model: gpt-oss-120b, task: email-invite, mechanism: rl}
+  - {model: gpt-oss-120b, task: chat-message, mechanism: rl}
+  - {model: gpt-oss-120b, task: chat-invite, mechanism: rl}
+
+  - {model: inkling-small, task: file-create, mechanism: rl}
+  - {model: inkling-small, task: drive-create, mechanism: rl}
+  - {model: inkling-small, task: email-invite, mechanism: rl}
+  - {model: inkling-small, task: chat-message, mechanism: rl}
+  - {model: inkling-small, task: chat-invite, mechanism: rl}
+
+  # Skill evolution: 4 models x 5 tasks
+  - {model: qwen3.8-27b, task: file-create, mechanism: skills}
+  - {model: qwen3.8-27b, task: drive-create, mechanism: skills}
+  - {model: qwen3.8-27b, task: email-invite, mechanism: skills}
+  - {model: qwen3.8-27b, task: chat-message, mechanism: skills}
+  - {model: qwen3.8-27b, task: chat-invite, mechanism: skills}
+
+  - {model: gpt-oss-120b, task: file-create, mechanism: skills}
+  - {model: gpt-oss-120b, task: drive-create, mechanism: skills}
+  - {model: gpt-oss-120b, task: email-invite, mechanism: skills}
+  - {model: gpt-oss-120b, task: chat-message, mechanism: skills}
+  - {model: gpt-oss-120b, task: chat-invite, mechanism: skills}
+
+  - {model: gpt-oss-20b, task: file-create, mechanism: skills}
+  - {model: gpt-oss-20b, task: drive-create, mechanism: skills}
+  - {model: gpt-oss-20b, task: email-invite, mechanism: skills}
+  - {model: gpt-oss-20b, task: chat-message, mechanism: skills}
+  - {model: gpt-oss-20b, task: chat-invite, mechanism: skills}
+
+  - {model: inkling-small, task: file-create, mechanism: skills}
+  - {model: inkling-small, task: drive-create, mechanism: skills}
+  - {model: inkling-small, task: email-invite, mechanism: skills}
+  - {model: inkling-small, task: chat-message, mechanism: skills}
+  - {model: inkling-small, task: chat-invite, mechanism: skills}

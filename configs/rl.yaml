@@ -1,0 +1,13 @@
+# RL adaptation with OpenClaw-RL: GRPO with its built-in process reward model (PRM) on a Tinker LoRA.
+# Training runs in two stages of updates_per_stage updates each; the second stage resumes from the
+# last checkpoint of the first.
+batch_size: 4                # samples per update; a sample is one agent turn, not an episode
+prm_m: 3                     # PRM samples per turn
+lora_rank: 32
+learning_rate: 1.0e-4
+updates_per_stage: 32
+max_steps: 100               # the trainer's own step limit; each stage stops at updates_per_stage
+save_interval: 32            # the trainer saves a checkpoint every this many updates
+until_step_timeout_s: 1800   # how long to wait for the trainer to finish an update once the last episode has run
+fingerprint_min_diff: 0.05   # a checkpoint counts as adapted only if its mean log-probability on a fixed probe text differs from the base model's by more than this
+max_restarts: 3              # how often a failed stage starts again from its starting checkpoint before the run fails

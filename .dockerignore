@@ -1,0 +1,37 @@
+# What the build context leaves out. The image is built from a clone with its submodules, so everything the
+# frameworks need under third_party/ is sent; what is left out is version control, anything that holds a secret,
+# local environments, results and caches.
+
+# Version control (a submodule's .git is a file that points into the clone's .git, which the image does not have)
+.git
+**/.git
+.github
+
+# Secrets: a .env file is read on the host by `docker run --env-file`, never by the build
+**/.env
+**/*.env
+**/.env.*
+!.env.example
+
+# Local Python environments and tool caches
+**/.venv*
+**/__pycache__
+**/*.pyc
+**/*.egg-info
+**/.pytest_cache
+**/.mypy_cache
+**/.ruff_cache
+
+# Upstream experiment drivers of MetaClaw, not used here: they contain a hard-coded credential
+third_party/MetaClaw/scripts
+
+# Results and scratch directories
+outputs
+scratch
+tmp
+
+# Editor and operating system files
+.claude
+.idea
+.vscode
+**/.DS_Store

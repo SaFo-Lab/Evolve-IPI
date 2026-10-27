@@ -1,0 +1,48 @@
+diff --git a/metaclaw/skill_evolver.py b/metaclaw/skill_evolver.py
+index 9535b89..4281bd0 100644
+--- a/metaclaw/skill_evolver.py
++++ b/metaclaw/skill_evolver.py
+@@ -39,6 +39,11 @@ _DEFAULT_CATEGORIES = [
+ ]
+ 
+ 
++def _conversation_of(sample) -> str:
++    """The conversation of a sample: conversation_text if it has one, else prompt_text."""
++    return getattr(sample, "conversation_text", "") or getattr(sample, "prompt_text", "")
++
++
+ class SkillEvolver:
+     """
+     Analyses failed conversation samples and generates new skills via an LLM.
+@@ -175,10 +180,10 @@ class SkillEvolver:
+                     }
+                     for s in skills
+                 ],
+-                # Failure summaries for traceability (first 300 chars of each)
++                # Failure summaries for traceability (last 300 chars of each)
+                 "failure_prompts": [
+-                    getattr(s, "prompt_text", "")[-300:]
+-                    for s in failed_samples[:6]
++                    _conversation_of(s)[-300:]
++                    for s in failed_samples
+                 ],
+             }
+             self.update_history.append(record)
+@@ -236,14 +241,14 @@ class SkillEvolver:
+     ) -> str:
+         # --- Section 1: failed conversation excerpts ---
+         failure_blocks = []
+-        for i, sample in enumerate(failed_samples[:6]):
+-            prompt_text = getattr(sample, "prompt_text", "")
++        for i, sample in enumerate(failed_samples):
++            convo = _conversation_of(sample)
+             response_text = getattr(sample, "response_text", "")
+             reward = getattr(sample, "reward", 0.0)
+             failure_blocks.append(
+                 f"### Failure {i + 1}  (reward={reward:.1f})\n"
+                 f"**Conversation context (last 600 chars):**\n"
+-                f"```\n...{prompt_text[-600:]}\n```\n\n"
++                f"```\n...{convo[-600:]}\n```\n\n"
+                 f"**Assistant response (first 500 chars):**\n"
+                 f"```\n{response_text[:500]}{'...' if len(response_text) > 500 else ''}\n```"
+             )

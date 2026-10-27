@@ -1,0 +1,103 @@
+#!/usr/bin/env python3
+"""travel: hotels, restaurants, cars, flights, a travel inbox and reservations (fake service)."""
+import argparse
+import os
+import sys
+
+sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+import _lib  # noqa: E402
+
+
+def _city(items, city):
+    want = city.strip().casefold()
+    return [it for it in items if it["city"].casefold() == want]
+
+
+def main(argv):
+    ap = argparse.ArgumentParser(prog="svc/travel", description="Travel services for %s (today is %s)" % (_lib.ME_NAME, _lib.TODAY))
+    sub = ap.add_subparsers(dest="cmd", required=True)
+    p = sub.add_parser("hotels", help="list hotels in a city"); p.add_argument("--city", required=True)
+    p = sub.add_parser("hotel", help="print one hotel in full, with reviews"); p.add_argument("name")
+    p = sub.add_parser("restaurants", help="list restaurants in a city"); p.add_argument("--city", required=True)
+    p = sub.add_parser("cars", help="list car rentals in a city"); p.add_argument("--city", required=True)
+    p = sub.add_parser("flights", help="list flights"); p.add_argument("--from", dest="src", required=True); p.add_argument("--to", dest="dst", required=True)
+    sub.add_parser("inbox", help="list travel messages: id, date, sender, subject")
+    p = sub.add_parser("read", help="print one travel message in full"); p.add_argument("id")
+    p = sub.add_parser("reserve", help="reserve a hotel room")
+    p.add_argument("--hotel", required=True); p.add_argument("--from", dest="src", required=True); p.add_argument("--to", dest="dst", required=True)
+    p = sub.add_parser("review", help="leave a review for a hotel")
+    p.add_argument("--hotel", required=True); p.add_argument("--text", required=True)
+    sub.add_parser("reservations", help="list my reservations")
+    sub.add_parser("me", help="print my traveller profile")
+    a = ap.parse_args(argv)
+    st = _lib.load("travel")
+    if a.cmd == "hotels":
+        hs = _city(st["hotels"], a.city)
+        if not hs:
+            print("no hotels in %s" % a.city)
+        for h in hs:
+            print("%s  rating %s  %s/night  %s" % (h["name"], h["rating"], h["price"], h["address"]))
+    elif a.cmd == "hotel":
+        h = _lib.find(st["hotels"], "name", a.name, "hotel named")
+        print("name: %s\ncity: %s\nrating: %s\nprice: %s per night\naddress: %s\nreviews:" % (
+            h["name"], h["city"], h["rating"], h["price"], h["address"]))
+        for rv in h["reviews"]:
+            print("- %s" % rv)
+    elif a.cmd == "restaurants":
+        rs = _city(st["restaurants"], a.city)
+        if not rs:
+            print("no restaurants in %s" % a.city)
+        for r in rs:
+            print("%s  %s  rating %s  %s" % (r["name"], r["cuisine"], r["rating"], r["price"]))
+    elif a.cmd == "cars":
+        cs = _city(st["cars"], a.city)
+        if not cs:
+            print("no car rentals in %s" % a.city)
+        for c in cs:
+            print("%s  %s  %s/day" % (c["company"], c["model"], c["price"]))
+    elif a.cmd == "flights":
+        fs = [f for f in st["flights"] if f["from"].casefold() == a.src.casefold() and f["to"].casefold() == a.dst.casefold()]
+        if not fs:
+            print("no flights from %s to %s" % (a.src, a.dst))
+        for f in fs:
+            print("%s %s  %s %s-%s  %s" % (f["airline"], f["number"], f["date"], f["dep"], f["arr"], f["price"]))
+    elif a.cmd == "inbox":
+        for m in st["inbox"]:
+            print("%s  %s  %s  %s" % (m["id"], m["date"], m["from"], m["subject"]))
+    elif a.cmd == "read":
+        m = _lib.find(st["inbox"], "id", a.id, "travel message with id")
+        print("id: %s\ndate: %s\nfrom: %s\nsubject: %s\n\n%s" % (m["id"], m["date"], m["from"], m["subject"], m["body"]))
+    elif a.cmd == "reserve":
+        h = _lib.find(st["hotels"], "name", a.hotel, "hotel named")
+        src, dst = _lib.check_date(a.src), _lib.check_date(a.dst)
+        if src >= dst:
+            raise _lib.ServiceError("check-in %s must be before check-out %s" % (src, dst))
+        rv = {"id": _lib.next_id(st["reservations"], "r"), "hotel": h["name"], "from": src, "to": dst}
+        st["reservations"].append(rv)
+        _lib.save("travel", st)
+        print("reserved %s: %s %s to %s" % (rv["id"], rv["hotel"], rv["from"], rv["to"]))
+    elif a.cmd == "review":
+        # The read side has always been `hotel <name>`, which prints rating and reviews; this is
+        # the write side of the same data. It stays inside travel.json rather than introducing an
+        # eighth state file, because reset() rebuilds exactly the seven in
+        # services_core.STATE_FILES and a store outside that contract would survive episodes.
+        h = _lib.find(st["hotels"], "name", a.hotel, "hotel named")
+        text = " ".join(a.text.split())
+        if not text:
+            raise _lib.ServiceError("a review needs text")
+        h["reviews"].append(text)
+        _lib.save("travel", st)
+        print("posted a review for %s" % h["name"])
+    elif a.cmd == "reservations":
+        if not st["reservations"]:
+            print("no reservations")
+        for rv in st["reservations"]:
+            print("%s  %s  %s to %s" % (rv["id"], rv["hotel"], rv["from"], rv["to"]))
+    elif a.cmd == "me":
+        u = st["user"]
+        print("name: %s\nemail: %s\nphone: %s\npassport: %s" % (u["name"], u["email"], u["phone"], u["passport"]))
+    return 0
+
+
+if __name__ == "__main__":
+    _lib.run("travel", main)

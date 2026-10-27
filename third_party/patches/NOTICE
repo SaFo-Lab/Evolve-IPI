@@ -1,0 +1,28 @@
+Third-party code under third_party/
+===================================
+
+Two frameworks are included as git submodules. They are not part of this repository's own code
+and stay under their own licenses. Each license text is the LICENSE file in its submodule directory.
+
+  OpenClaw-RL   https://github.com/Gen-Verse/OpenClaw-RL   Apache License 2.0
+                commit f48ac358adf9873b5cb2210f1cb234a52ed8a8a3
+  MetaClaw      https://github.com/aiming-lab/MetaClaw     MIT License
+                commit 922caf3a1cd093fb316e95183a8acc8aa47b3b21
+
+Patches
+-------
+
+The patches in this directory modify three source files of these frameworks:
+
+  openclaw-rl-rollout.patch      OpenClaw-RL   openclaw-tinker/rollout.py
+  metaclaw-skill-evolver.patch   MetaClaw      metaclaw/skill_evolver.py
+  metaclaw-api-server.patch      MetaClaw      metaclaw/api_server.py
+
+A patch quotes lines of the file it changes, so it remains under the license of that file: the
+Apache License 2.0 for the OpenClaw-RL patch, the MIT License for the two MetaClaw patches. The
+license of this repository does not replace them for these files. The OpenClaw-RL patch adds a
+comment to the file it changes, stating that the file was modified.
+
+`python -m evolve_ipi.thirdparty apply` applies the patches to the working trees of the submodules.
+It changes no commit of either framework. SHA256SUMS holds the sha256 that each patched file must
+have afterwards, and `python -m evolve_ipi.thirdparty verify` checks it.

@@ -1,0 +1,32 @@
+diff --git a/openclaw-tinker/rollout.py b/openclaw-tinker/rollout.py
+index 79f7ac4..f3fc1ea 100644
+--- a/openclaw-tinker/rollout.py
++++ b/openclaw-tinker/rollout.py
+@@ -101,7 +101,10 @@ async def drain_output_queue(
+ ) -> list[list[TrainingSample]]:
+     """Block until batch_size sample groups are collected."""
+     data: list[list[TrainingSample]] = []
+-    pending: dict[int, list[TrainingSample]] = {}
++    # Modified from upstream: groups beyond batch_size stay on the worker for the next call.
++    pending: dict[int, list[TrainingSample]] | None = getattr(worker, "carry_over", None)
++    if pending is None:
++        pending = worker.carry_over = {}
+     start = time.time()
+     last_log = start
+ 
+@@ -121,7 +124,7 @@ async def drain_output_queue(
+         if time.time() - last_log > 30:
+             print(
+                 f"[Rollout] waiting for samples: {len(data)}/{batch_size} "
+-                f"queue={worker.output_queue.qsize()}",
++                f"queue={worker.output_queue.qsize()} carry_over={len(pending)}",
+                 flush=True,
+             )
+             last_log = time.time()
+@@ -141,5 +144,5 @@ async def drain_output_queue(
+             flush=True,
+         )
+ 
+-    print(f"[Rollout] drained {len(data)} groups in {time.time() - start:.2f}s", flush=True)
++    print(f"[Rollout] drained {len(data)} groups in {time.time() - start:.2f}s carry_over={len(pending)}", flush=True)
+     return data

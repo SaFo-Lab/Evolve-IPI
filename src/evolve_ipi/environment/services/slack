@@ -1,0 +1,84 @@
+#!/usr/bin/env python3
+"""slack: the team chat of Alex Morgan (fake service)."""
+import argparse
+import os
+import sys
+
+sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+import _lib  # noqa: E402
+
+
+def _channel(st, name):
+    key = name.strip().lstrip("#")
+    for k in st["channels"]:
+        if k.casefold() == key.casefold():
+            return k, st["channels"][k]
+    raise _lib.ServiceError("no channel #%s" % key)
+
+
+def _user(st, name):
+    key = name.strip().lstrip("@")
+    for u in st["users"] + [st["me"]]:
+        if u.casefold() == key.casefold():
+            return u
+    raise _lib.ServiceError("no user %r" % key)
+
+
+def main(argv):
+    ap = argparse.ArgumentParser(prog="svc/slack", description="Team chat; I am %s" % _lib.ME_SLACK)
+    sub = ap.add_subparsers(dest="cmd", required=True)
+    sub.add_parser("channels", help="list channels")
+    p = sub.add_parser("read", help="print a channel's messages"); p.add_argument("channel")
+    p = sub.add_parser("post", help="post a message to a channel"); p.add_argument("channel"); p.add_argument("text")
+    p = sub.add_parser("dm", help="send a direct message to a user"); p.add_argument("user"); p.add_argument("text")
+    p = sub.add_parser("users", help="list a channel's members"); p.add_argument("channel")
+    p = sub.add_parser("add", help="add a user to a channel"); p.add_argument("user"); p.add_argument("channel")
+    sub.add_parser("inbox", help="list direct messages sent to me")
+    a = ap.parse_args(argv)
+    st = _lib.load("slack")
+    me = st["me"]
+    if a.cmd == "channels":
+        for name, ch in st["channels"].items():
+            print("#%s  (%d members, %d messages)" % (name, len(ch["members"]), len(ch["messages"])))
+    elif a.cmd == "read":
+        _, ch = _channel(st, a.channel)
+        for m in ch["messages"]:
+            print("[%d] %s: %s" % (m["seq"], m["sender"], m["text"]))
+    elif a.cmd == "post":
+        name, ch = _channel(st, a.channel)
+        if not a.text.strip():
+            raise _lib.ServiceError("message text must not be empty")
+        m = {"seq": len(ch["messages"]) + 1, "sender": me, "text": a.text}
+        ch["messages"].append(m)
+        _lib.save("slack", st)
+        print("posted to #%s as %s [%d]" % (name, me, m["seq"]))
+    elif a.cmd == "dm":
+        user = _user(st, a.user)
+        if not a.text.strip():
+            raise _lib.ServiceError("message text must not be empty")
+        m = {"seq": len(st["dms"]) + 1, "from": me, "to": user, "text": a.text}
+        st["dms"].append(m)
+        _lib.save("slack", st)
+        print("sent direct message to %s [%d]" % (user, m["seq"]))
+    elif a.cmd == "users":
+        _, ch = _channel(st, a.channel)
+        for u in ch["members"]:
+            print(u)
+    elif a.cmd == "add":
+        user = _user(st, a.user)
+        name, ch = _channel(st, a.channel)
+        if user not in ch["members"]:
+            ch["members"].append(user)
+        _lib.save("slack", st)
+        print("added %s to #%s" % (user, name))
+    elif a.cmd == "inbox":
+        mine = [m for m in st["dms"] if m["to"] == me]
+        if not mine:
+            print("no direct messages")
+        for m in mine:
+            print("[%d] %s -> %s: %s" % (m["seq"], m["from"], m["to"], m["text"]))
+    return 0
+
+
+if __name__ == "__main__":
+    _lib.run("slack", main)

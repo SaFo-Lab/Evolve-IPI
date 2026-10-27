@@ -1,0 +1,6 @@
+# Files whose bytes are pinned by a hash or by a test: git must never rewrite their line endings.
+src/evolve_ipi/environment/services/* -text
+src/evolve_ipi/environment/workspace_files/* -text
+data/** -text
+third_party/patches/* -text
+docker/entrypoint.sh -text

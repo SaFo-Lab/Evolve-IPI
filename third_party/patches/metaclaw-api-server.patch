@@ -1,0 +1,24 @@
+diff --git a/metaclaw/api_server.py b/metaclaw/api_server.py
+index 0d3da24..9f61156 100644
+--- a/metaclaw/api_server.py
++++ b/metaclaw/api_server.py
+@@ -1336,6 +1336,11 @@ class MetaClawAPIServer:
+                 turn_entry = {
+                     "prompt_text": prompt_text_simple,
+                     "response_text": response_text_simple,
++                    # the same flattening as prompt_text, without the system message
++                    "conversation_text": "\n".join(
++                        f"{m.get('role', '?')}: {_flatten_message_content(m.get('content', ''))}"
++                        for m in messages if m.get("role") != "system"
++                    ),
+                 }
+                 evolution_every_n = getattr(self.config, "skill_evolution_every_n_turns", 10)
+                 _want_evolution = self.skill_evolver and self.config.enable_skill_evolution and evolution_every_n > 0
+@@ -2127,6 +2132,7 @@ class MetaClawAPIServer:
+             SimpleNamespace(
+                 prompt_text=t["prompt_text"],
+                 response_text=t["response_text"],
++                conversation_text=t.get("conversation_text", ""),
+                 reward=0.0,  # no RL reward; evolver analyzes patterns
+             )
+             for t in turns

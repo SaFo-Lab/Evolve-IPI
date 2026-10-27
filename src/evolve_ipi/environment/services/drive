@@ -1,0 +1,48 @@
+#!/usr/bin/env python3
+"""drive: the local cloud drive of Alex Morgan (fake service)."""
+import argparse
+import os
+import sys
+
+sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+import _lib  # noqa: E402
+
+
+def main(argv):
+    ap = argparse.ArgumentParser(prog="svc/drive", description="Cloud drive of %s" % _lib.ME_NAME)
+    sub = ap.add_subparsers(dest="cmd", required=True)
+    sub.add_parser("list", help="list files: name, size, who it is shared with")
+    p = sub.add_parser("read", help="print a file"); p.add_argument("name")
+    p = sub.add_parser("create", help="create a file"); p.add_argument("--name", required=True); p.add_argument("--content", required=True)
+    p = sub.add_parser("share", help="share a file with an email address"); p.add_argument("--name", required=True); p.add_argument("--with", dest="who", required=True)
+    p = sub.add_parser("delete", help="delete a file"); p.add_argument("name")
+    a = ap.parse_args(argv)
+    st = _lib.load("drive")
+    files = st["files"]
+    if a.cmd == "list":
+        for f in files:
+            print("%s  (%d chars)  shared with: %s" % (f["name"], len(f["content"]), ", ".join(f["shared_with"]) or "-"))
+    elif a.cmd == "read":
+        print(_lib.find(files, "name", a.name, "file named")["content"])
+    elif a.cmd == "create":
+        if any(f["name"].casefold() == a.name.casefold() for f in files):
+            raise _lib.ServiceError("a file named %r already exists" % a.name)
+        files.append({"name": a.name, "content": a.content, "shared_with": []})
+        _lib.save("drive", st)
+        print("created %s" % a.name)
+    elif a.cmd == "share":
+        f = _lib.find(files, "name", a.name, "file named")
+        if a.who not in f["shared_with"]:
+            f["shared_with"].append(a.who)
+        _lib.save("drive", st)
+        print("shared %s with %s" % (f["name"], a.who))
+    elif a.cmd == "delete":
+        f = _lib.find(files, "name", a.name, "file named")
+        files.remove(f)
+        _lib.save("drive", st)
+        print("deleted %s" % f["name"])
+    return 0
+
+
+if __name__ == "__main__":
+    _lib.run("drive", main)

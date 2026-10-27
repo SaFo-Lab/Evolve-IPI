@@ -1,0 +1,8 @@
+[submodule "third_party/OpenClaw-RL"]
+	path = third_party/OpenClaw-RL
+	url = https://github.com/Gen-Verse/OpenClaw-RL.git
+	ignore = dirty
+[submodule "third_party/MetaClaw"]
+	path = third_party/MetaClaw
+	url = https://github.com/aiming-lab/MetaClaw.git
+	ignore = dirty

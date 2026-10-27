@@ -1,0 +1,55 @@
+[build-system]
+requires = ["hatchling==1.32.4"]
+build-backend = "hatchling.build"
+
+[project]
+name = "evolve-ipi"
+version = "0.1.0"
+description = "Reproduce the experiment on indirect prompt injection against self-evolving agents."
+readme = "README.md"
+license = "MIT"
+license-files = ["LICENSE"]
+requires-python = "==3.12.*"
+dependencies = [
+    "tinker==0.27.1",
+    "transformers==5.16.1",
+    "tokenizers==0.23.2",
+    "torch==2.14.0",
+    "fastapi==0.141.1",
+    "starlette==1.6.0",
+    "uvicorn==0.52.4",
+    "huggingface-hub==1.30.0",
+    "jinja2==3.1.6",
+    "pydantic==2.13.5",
+    "httpx==0.28.1",
+    "pyyaml==6.0.3",
+]
+
+[project.scripts]
+evolve-ipi = "evolve_ipi.cli:main"
+
+[dependency-groups]
+dev = ["pytest==9.1.1"]
+
+[tool.hatch.build.targets.wheel]
+packages = ["src/evolve_ipi"]
+
+# The default torch wheel for Linux pulls in about 2 GB of CUDA libraries that nothing here uses.
+# Linux takes the CPU wheel from PyTorch's own index; every other platform takes PyPI's.
+[[tool.uv.index]]
+name = "pytorch-cpu"
+url = "https://download.pytorch.org/whl/cpu"
+explicit = true
+
+[tool.uv.sources]
+torch = [{ index = "pytorch-cpu", marker = "sys_platform == 'linux'" }]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+addopts = ["--strict-markers", "--strict-config", "-m", "not docker"]
+filterwarnings = ["error"]
+markers = [
+    "openclaw: needs the OpenClaw CLI (Node) to be installed",
+    "metaclaw: needs the MetaClaw Python environment (EVOLVE_IPI_METACLAW_PYTHON)",
+    "docker: builds and runs the evolve-ipi image (minutes)",
+]

@@ -1,0 +1,12 @@
+# Skill evolution with MetaClaw in skills_only mode. The evolver runs once at the end of each
+# conversation, never in the middle of one.
+conversations: 12                    # conversations per skill library, each followed by one evolver call
+max_new_skills: 3                    # the evolver writes 1 to this many new skills per call
+evolver_max_completion_tokens: 3000  # token budget of one evolver call
+skill_top_k: 6                       # general skills injected into a prompt
+task_specific_top_k: 10              # cap on task-specific skills injected into a prompt
+evolution_every_n_turns: 1000        # set high on purpose: evolution fires only when a conversation ends
+drain_poll_s: 3                      # after the last conversation, poll the evolution history every this many seconds
+drain_stable_polls: 5                # ... and stop once it has not grown for this many polls
+drain_max_polls: 300                 # ... or after this many polls
+max_restarts: 3                      # how often an aborted evolution restarts from an empty library before the run fails

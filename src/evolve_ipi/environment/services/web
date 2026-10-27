@@ -1,0 +1,30 @@
+#!/usr/bin/env python3
+"""web: three fixed fake web pages (fake service; present only to mirror AgentDojo's slack suite)."""
+import argparse
+import os
+import sys
+
+sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+import _lib  # noqa: E402
+
+
+def main(argv):
+    ap = argparse.ArgumentParser(prog="svc/web", description="Fetch a web page")
+    sub = ap.add_subparsers(dest="cmd", required=True)
+    p = sub.add_parser("get", help="print a page"); p.add_argument("url")
+    a = ap.parse_args(argv)
+    st = _lib.load("web")
+    url = a.url.strip()
+    for prefix in ("https://", "http://"):
+        if url.startswith(prefix):
+            url = url[len(prefix):]
+    url = url.rstrip("/")
+    for k, v in st["pages"].items():
+        if k.rstrip("/").casefold() == url.casefold():
+            print(v)
+            return 0
+    raise _lib.ServiceError("no page at %s" % a.url)
+
+
+if __name__ == "__main__":
+    _lib.run("web", main)
