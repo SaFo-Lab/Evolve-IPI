@@ -327,9 +327,9 @@ def test_the_files_and_directories_the_readme_names_exist() -> None:
             assert (REPO / target).is_file(), target
     for name in re.findall(r"`((?:configs/)?[a-z]+\.yaml)`", README_TEXT):
         assert (REPO / "configs" / Path(name).name).is_file(), name
-    for name in ("LICENSE", "THIRD_PARTY_NOTICES.md", "Dockerfile", ".env.example", "CITATION.bib"):
+    for name in ("LICENSE", "LICENSE-DATA", "THIRD_PARTY_NOTICES.md", "Dockerfile", ".env.example", "CITATION.bib"):
         assert (REPO / name).is_file(), name
-    assert "`LICENSE`" in README_TEXT and "`THIRD_PARTY_NOTICES.md`" in README_TEXT
+    assert all(f"`{name}`" in README_TEXT for name in ("LICENSE", "LICENSE-DATA", "THIRD_PARTY_NOTICES.md"))
 
 
 def test_the_readme_does_not_make_gpt_5_2_a_requirement() -> None:

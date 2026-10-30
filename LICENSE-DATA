@@ -1,0 +1,55 @@
+Evolve-IPI Research Dataset License
+
+Copyright (c) 2026 Xinyan Wang, Xiaogeng Liu, Jun Shao, Chaowei Xiao
+
+1. SCOPE
+
+This license applies to the benchmark data under data/ in the Evolve-IPI
+repository and to copies of that data distributed in the Evolve-IPI dataset
+repository on Hugging Face (the "Dataset"). The Dataset includes task
+descriptions, adaptation and test instances, presentation orders, and
+associated metadata. This license does not cover software code or third-party
+materials, which remain subject to their respective licenses.
+
+2. PERMITTED USE
+
+Subject to the conditions below, the copyright holders grant you a
+non-exclusive, worldwide, royalty-free license to download, use, reproduce,
+modify, and redistribute the Dataset solely for academic research, education,
+and defensive security evaluation. Testing any system you do not own requires
+prior authorization from its operator.
+
+3. PROHIBITED USE
+
+You may not use the Dataset or any derivative to conduct or facilitate
+unauthorized attacks, data exfiltration, or unauthorized actions against
+real-world systems. You may not sell or commercially license the Dataset
+without separate written permission from the copyright holders.
+
+4. REDISTRIBUTION AND ATTRIBUTION
+
+You may redistribute the Dataset or a derivative only for the purposes
+permitted in Section 2. You must include this license and copyright notice,
+identify Evolve-IPI as the source, and clearly indicate any modifications.
+Recipients must receive the Dataset under these same terms.
+
+5. CITATION
+
+Publications and other public reports that use the Dataset must cite:
+
+Xinyan Wang, Xiaogeng Liu, Jun Shao, and Chaowei Xiao. "Appreciation Teaches
+Unauthorized Execution: Self-Evolution Degrades the Robustness of Personal
+Agents to Indirect Prompt Injection." arXiv:2610.39122, 2026.
+https://arxiv.org/abs/2610.39122
+
+6. RESPONSIBLE DISCLOSURE
+
+If use of the Dataset reveals a vulnerability in a third-party system, make
+reasonable efforts to notify the affected party before publicly disclosing
+the vulnerability.
+
+7. DISCLAIMER
+
+The Dataset is provided as-is, without warranties of any kind. To the extent
+permitted by law, the copyright holders are not liable for claims or damages
+arising from its use.

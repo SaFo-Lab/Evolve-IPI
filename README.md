@@ -1,13 +1,13 @@
 # Appreciation Teaches Unauthorized Execution: Self-Evolution Degrades the Robustness of Personal Agents to Indirect Prompt Injection
 
-[![Paper: arXiv](https://img.shields.io/badge/Paper-arXiv-b31b1b)](https://arxiv.org/abs/2610.39122) [![Citation: BibTeX](https://img.shields.io/badge/Citation-BibTeX-blue)](#citation)
+[![Paper: arXiv](https://img.shields.io/badge/Paper-arXiv-b31b1b)](https://arxiv.org/abs/2610.39122) [![Dataset: Hugging Face](https://img.shields.io/badge/Dataset-Hugging%20Face-FFD21E)](https://huggingface.co/datasets/Evolve-IPI/Evolve-IPI) [![Citation: BibTeX](https://img.shields.io/badge/Citation-BibTeX-blue)](#citation)
 
 This repository contains the code and task data for the paper. It reproduces the main experiments on how self-evolution
 affects the robustness of personal agents to indirect prompt injection.
 
 ## Authors
 
-[Xinyan Wang](https://xinyan-wang-stat.github.io/)<sup>1,&#42;</sup>, [Xiaogeng Liu](https://xiaogeng-liu.com/)<sup>2,&#42;</sup>, [Jun Shao](https://stat.wisc.edu/staff/shao-jun/)<sup>1</sup>, [Chaowei Xiao](https://xiaocw11.github.io/)<sup>2</sup>
+[Xinyan Wang](https://xinyan-wang-stat.github.io/)<sup>1,&#42;</sup>, [Xiaogeng Liu](https://xiaogeng-liu.com/)<sup>2,&#42;</sup>, [Jun Shao](https://pages.stat.wisc.edu/~shao/)<sup>1</sup>, [Chaowei Xiao](https://xiaocw11.github.io/)<sup>2</sup>
 
 <sup>1</sup> University of Wisconsin–Madison, <sup>2</sup> Johns Hopkins University
 
@@ -240,5 +240,9 @@ Dockerfile        the image that the experiments run in
 
 ## License
 
-MIT, see `LICENSE`. OpenClaw-RL (Apache-2.0) and MetaClaw (MIT) are included as git submodules under their own
-licenses, and the workspace templates of OpenClaw (MIT) are packaged with the code; see `THIRD_PARTY_NOTICES.md`.
+The Evolve-IPI software and associated documentation are released under the MIT License; see `LICENSE`. The benchmark
+data under `data/` are released under the Evolve-IPI Research Dataset License; see `LICENSE-DATA`. This dataset license
+permits academic research, education, and defensive security evaluation under its stated conditions.
+
+OpenClaw-RL (Apache-2.0) and MetaClaw (MIT) are included as git submodules under their own licenses, and the workspace
+templates of OpenClaw (MIT) are packaged with the code; see `THIRD_PARTY_NOTICES.md`.

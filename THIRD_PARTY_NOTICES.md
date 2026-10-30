@@ -1,7 +1,8 @@
 # Third-party notices
 
-Evolve-IPI itself is released under the MIT License (`LICENSE`). It includes or uses the third-party software below,
-which stays under its own license.
+Evolve-IPI software and associated documentation are released under the MIT License (`LICENSE`). The benchmark data
+under `data/` have a separate research dataset license (`LICENSE-DATA`). The third-party software below stays under its
+own license.
 
 ## OpenClaw
 
