@@ -1,26 +1,22 @@
-# Evolve-IPI
+# Appreciation Teaches Unauthorized Execution: Self-Evolution Degrades the Robustness of Personal Agents to Indirect Prompt Injection
 
-Official code for the paper **Appreciation Teaches Unauthorized Execution: Self-Evolution Degrades the Robustness of Personal
-Agents to Indirect Prompt Injection**.
+[![Paper: arXiv](https://img.shields.io/badge/Paper-arXiv-b31b1b)](https://arxiv.org/abs/2610.39122) [![Citation: BibTeX](https://img.shields.io/badge/Citation-BibTeX-blue)](#citation)
 
-<p align="center">
-  <a href="https://arxiv.org/abs/2610.39122"><img src="https://img.shields.io/badge/arXiv-2610.39122-b31b1b" alt="arXiv paper"></a>
-  <a href="https://arxiv.org/pdf/2610.39122"><img src="https://img.shields.io/badge/PDF-Download-blue" alt="Download PDF"></a>
-  <a href="https://github.com/SaFo-Lab/Evolve-IPI"><img src="https://img.shields.io/badge/Code-GitHub-black" alt="GitHub code"></a>
-  <a href="#citation"><img src="https://img.shields.io/badge/BibTeX-Cite-green" alt="BibTeX citation"></a>
-</p>
+This repository contains the code and task data for the paper. It reproduces the main experiments on how self-evolution
+affects the robustness of personal agents to indirect prompt injection.
 
 ## Authors
 
 [Xinyan Wang](https://xinyan-wang-stat.github.io/)<sup>1,&#42;</sup>, [Xiaogeng Liu](https://xiaogeng-liu.com/)<sup>2,&#42;</sup>, [Jun Shao](https://stat.wisc.edu/staff/shao-jun/)<sup>1</sup>, [Chaowei Xiao](https://xiaocw11.github.io/)<sup>2</sup>
 
-<sup>1</sup> University of Wisconsin–Madison · <sup>2</sup> Johns Hopkins University<br>
+<sup>1</sup> University of Wisconsin–Madison, <sup>2</sup> Johns Hopkins University
+
 <sup>&#42;</sup> Equal contribution
 
 ## News
 
-- **2026/10:** Our [paper](https://arxiv.org/abs/2610.39122) is available on arXiv.
-- **2026/10:** We released the code and task data in this repository.
+**[2026/10]** Our paper is available on [arXiv](https://arxiv.org/abs/2610.39122).<br>
+**[2026/10]** We released the code and task data in this repository.
 
 ## Overview
 
