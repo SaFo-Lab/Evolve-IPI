@@ -3,11 +3,26 @@
 Official code for the paper **Appreciation Teaches Unauthorized Execution: Self-Evolution Degrades the Robustness of Personal
 Agents to Indirect Prompt Injection**.
 
-Xinyan Wang<sup>\*</sup>, Xiaogeng Liu<sup>\*</sup>, Jun Shao, Chaowei Xiao
+<p align="center">
+  <a href="https://arxiv.org/abs/2610.39122"><img src="https://img.shields.io/badge/arXiv-2610.39122-b31b1b" alt="arXiv paper"></a>
+  <a href="https://arxiv.org/pdf/2610.39122"><img src="https://img.shields.io/badge/PDF-Download-blue" alt="Download PDF"></a>
+  <a href="https://github.com/SaFo-Lab/Evolve-IPI"><img src="https://img.shields.io/badge/Code-GitHub-black" alt="GitHub code"></a>
+  <a href="#citation"><img src="https://img.shields.io/badge/BibTeX-Cite-green" alt="BibTeX citation"></a>
+</p>
 
-<sup>\*</sup>Equal contribution
+## Authors
 
-Paper: arXiv (link added once the paper is posted) · [Citation](#citation)
+[Xinyan Wang](https://xinyan-wang-stat.github.io/)<sup>1,&#42;</sup>, [Xiaogeng Liu](https://xiaogeng-liu.com/)<sup>2,&#42;</sup>, [Jun Shao](https://stat.wisc.edu/staff/shao-jun/)<sup>1</sup>, [Chaowei Xiao](https://xiaocw11.github.io/)<sup>2</sup>
+
+<sup>1</sup> University of Wisconsin–Madison · <sup>2</sup> Johns Hopkins University<br>
+<sup>&#42;</sup> Equal contribution
+
+## News
+
+- **2026/10:** Our [paper](https://arxiv.org/abs/2610.39122) is available on arXiv.
+- **2026/10:** We released the code and task data in this repository.
+
+## Overview
 
 <p align="center">
   <img src="assets/figure1.png" width="95%" alt="During adaptation, the user authorizes a task described in a Slack post and approves the agent's action; after self-evolution, the agent executes an instruction that an attacker inserted into a new post, without the user's authorization">
@@ -216,11 +231,14 @@ Dockerfile        the image that the experiments run in
 ## Citation
 
 ```bibtex
-@article{wang2026appreciation,
-  title   = {Appreciation Teaches Unauthorized Execution: Self-Evolution Degrades the Robustness of Personal Agents to Indirect Prompt Injection},
-  author  = {Wang, Xinyan and Liu, Xiaogeng and Shao, Jun and Xiao, Chaowei},
-  journal = {arXiv preprint arXiv:XXXX.XXXXX},
-  year    = {2026}
+@misc{wang2026appreciation,
+  title         = {Appreciation Teaches Unauthorized Execution: Self-Evolution Degrades the Robustness of Personal Agents to Indirect Prompt Injection},
+  author        = {Wang, Xinyan and Liu, Xiaogeng and Shao, Jun and Xiao, Chaowei},
+  year          = {2026},
+  eprint        = {2610.39122},
+  archivePrefix = {arXiv},
+  primaryClass  = {cs.CR},
+  url           = {https://arxiv.org/abs/2610.39122}
 }
 ```
 
